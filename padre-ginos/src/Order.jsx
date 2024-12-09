@@ -1,9 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState} from "react";
 import Pizza from "./Pizza";
 
+const intl = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+});
+
 export default function Order() {
-  const [pizzaType, setPizzaType] = useState("pepperoni");
-  const [pizzaSize, setPizzaSize] = useState("M");
+    const [pizzaType, setPizzaType] = useState("pepperoni");
+    const [pizzaSize, setPizzaSize] = useState("M");
+    const [pizzaTypes, setPizzaTypes] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    let price, selectedPizza;
+    if(!loading) {
+        selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
+    }
+    //  the [] at the end of the useEffect is where you declare your data dependencies. React wants to know when to run that effect again. You don't give it data dependencies, it assumes any time any hook changes that you should run the effect again. This is bad because that would mean any time setPizzaTypes gets called it'd re-run render and all the hooks again. It'd run infinitely since fetchPizzaTypes calls setPizzaTypes. In our case, we actually only want it to run once, on creation of the component, and then to not run that effect again. (we'll do searching later via clicking the submit button) You can accomplish this only-run-on-creation by providing an empty array.
+    useEffect(() => {
+        fetchPizzaTypes();
+    }, []);
+
+
+    async function fetchPizzaTypes() {
+        const pizzasRes = await fetch("/api/pizzas");
+        const pizzasJson = await pizzasRes.json();
+        setPizzaTypes(pizzasJson);
+        setLoading(false);
+    }
 
   return (
     <div className="order">
@@ -17,9 +41,13 @@ export default function Order() {
               name="pizza-type"
               value={pizzaType}
             >
-              <option value="pepperoni">The Pepperoni Pizza</option>
-              <option value="hawaiian">The Hawaiian Pizza</option>
-              <option value="big_meat">The Big Meat Pizza</option>
+              {
+                pizzaTypes.map((pizza)=> (
+                    <option value={pizza.id} key={pizza.id}>
+                        {pizza.name}
+                    </option>
+                ))
+              }
             </select>
           </div>
           <div>
