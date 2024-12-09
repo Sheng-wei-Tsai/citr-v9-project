@@ -15,14 +15,18 @@ export default function Order() {
     let price, selectedPizza;
     if(!loading) {
         selectedPizza = pizzaTypes.find((pizza) => pizzaType === pizza.id);
+        price = intl.format(
+            selectedPizza.sizes ? selectedPizza.sizes[pizzaSize] : ""
+        )
     }
     //  the [] at the end of the useEffect is where you declare your data dependencies. React wants to know when to run that effect again. You don't give it data dependencies, it assumes any time any hook changes that you should run the effect again. This is bad because that would mean any time setPizzaTypes gets called it'd re-run render and all the hooks again. It'd run infinitely since fetchPizzaTypes calls setPizzaTypes. In our case, we actually only want it to run once, on creation of the component, and then to not run that effect again. (we'll do searching later via clicking the submit button) You can accomplish this only-run-on-creation by providing an empty array.
     useEffect(() => {
-        fetchPizzaTypes();
+        fetchPizzaTypes(pizzaSize);
     }, []);
 
 
     async function fetchPizzaTypes() {
+        await new Promise((resolve) => setTimeout(resolve, 3000));
         const pizzasRes = await fetch("/api/pizzas");
         const pizzasJson = await pizzasRes.json();
         setPizzaTypes(pizzasJson);
@@ -91,12 +95,18 @@ export default function Order() {
           <button type="submit">Add to Cart</button>
         </div>
         <div className="order-pizza">
-          <Pizza
-            name="Pepperoni"
-            description="Mozzarella Cheese, Pepperoni"
-            image="/public/pizzas/pepperoni.webp"
-          />
-          <p>$13.37</p>
+          {
+            loading ? (
+                <h1>loading pizza lol</h1>
+            ) : (
+                <Pizza
+                    name={selectedPizza.name}
+                    description={selectedPizza.description}
+                    image={selectedPizza.image}
+                />
+            )
+          }
+          <p>{price}</p>
         </div>
       </form>
     </div>
