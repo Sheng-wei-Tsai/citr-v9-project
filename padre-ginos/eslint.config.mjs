@@ -2,9 +2,8 @@ import js from "@eslint/js";
 import globals from "globals";
 import prettier from "eslint-config-prettier";
 import reactPlugin from "eslint-plugin-react";
-import { react } from "@babel/types";
 
-/** @type {import('eslint').Linter.config[]} */
+/** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
   {
