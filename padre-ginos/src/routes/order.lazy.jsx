@@ -8,7 +8,7 @@ export const Route = createLazyFileRoute("/order")({
   component: Order,
 });
 
-// feel free to change en-US / USD to your locale
+// change en-US / USD to your locale
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD"    ,
