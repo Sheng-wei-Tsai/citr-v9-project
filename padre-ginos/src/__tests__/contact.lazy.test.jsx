@@ -1,4 +1,4 @@
-import {render, cleanup} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {expect, test, vi} from 'vitest';
 import createFetchMock from "vitest-fetch-mock";
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
@@ -39,8 +39,8 @@ test("can submit contact form", async () => {
 
     const requests = fetchMocker.requests();
     expect(requests.length).toBe(1);
-    expect(requests[0].url).toBe("api/contact");
-    expect(fetchMocker).toHaveBeenCalledWith("api/contact", {
+    expect(requests[0].url).toBe("/api/contact");
+    expect(fetchMocker).toHaveBeenCalledWith("/api/contact", {
         body: JSON.stringify(testData),
         headers: {
             "Content-Type": "application/json",
