@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import plugin from "@tanstack/eslint-plugin-query";
 
 export default defineConfig({
   server: {
@@ -15,11 +16,16 @@ export default defineConfig({
       },
     },
   },
-  plugins: [TanStackRouterVite(), react()],
-  // test: {
-  //   environment: "happy-dom",
-  //   coverage: {
-  //     reporter: ['text', 'json', 'html'],
-  //   },
-  // }
+  plugins: [TanStackRouterVite(), react({
+    babel: {
+      plugins: [
+        [
+          "babel-plugin-react-compiler",
+          {
+            target: "19",
+          }
+        ]
+      ]
+    }
+  })],
 });
